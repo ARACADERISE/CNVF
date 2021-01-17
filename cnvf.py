@@ -2,6 +2,13 @@ import os, sys
 
 new_file = input('New vim file: ')
 
+if os.path.isfile(os.path.abspath(new_file)):
+    override = input(f'Do you want to override the file {new_file}? [y/n] > ')
+    if override == 'n':
+        os.system(f'vim {new_file}')
+        os.system('clear')
+        sys.exit(0)
+
 if '.c' in new_file:
     functions = input('Functions to add seperated by commas.\nPress enter or put none if you do not want any.\n > ')
     if not functions.lower() == 'none' or not functions == '':
@@ -22,7 +29,7 @@ if '.c' in new_file:
             for i in range(len(return_types)):
                 if i == 0 and return_types[i] == '' or return_types[i] == 'none':
                     while return_types[0] == '' or return_types[0] == 'none':
-                        return_types = input('Return types of each functions, seperated by commas(in order, {list(i for i in classes)}) > )')
+                        return_types = input(f'Return types of each functions, seperated by commas(in order, {list(i for i in classes)}) > )')
                         return_types = return_types.split(',')
                         if not len(return_types) == len(functions):
                             return_types[0] = ''
@@ -88,6 +95,13 @@ elif '.java' in new_file:
         if isinstance(classes,list):
             return_types = input(f'Return types of each class(in order, {list(i for i in classes)}) > ')
             return_types = return_types.split(',')
+            for i in range(len(return_types)):
+                if i == 0 and return_types[i] == '' or return_types[i] == 'none':
+                    while return_types[0] == '' or return_types[0] == 'none':
+                        return_types = input(f'Return types of each class(in order, {list(i for i in classes)} > ')
+                        return_types = return_types.split(',')
+                        if not len(return_types) == len(classes):
+                            return_types[0] = ''
             if not len(return_types) == len(classes):
                 while len(return_types) != len(classes):
                     print('Length of return types does not match the amount of classes.\n')
