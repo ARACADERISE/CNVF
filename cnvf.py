@@ -7,6 +7,15 @@ if os.path.isfile(os.path.abspath(new_file)):
     if override == 'n':
         os.system(f'vim {new_file}')
         os.system('clear')
+        if '.c' in new_file: pass
+        if '.py' in new_file: pass
+        if '.java' in new_file:
+            filename = ''
+            for i in range(len(new_file)):
+                if new_file[i] != '.':
+                    filename += new_file[i]
+                else: break
+            os.system(f'javac {new_file} && java {filename}')
         sys.exit(0)
 
 if '.c' in new_file:
@@ -94,6 +103,8 @@ elif '.java' in new_file:
                 del(classes[i])
         if isinstance(classes,list):
             return_types = input(f'Return types of each class(in order, {list(i for i in classes)}) > ')
+            type_ = input(f'What type do you want each function to be[Private/Public](in order, {list(i for i in classes)} > ')
+            type_ = type_.split(',')
             return_types = return_types.split(',')
             for i in range(len(return_types)):
                 if i == 0 and return_types[i] == '' or return_types[i] == 'none':
@@ -102,6 +113,24 @@ elif '.java' in new_file:
                         return_types = return_types.split(',')
                         if not len(return_types) == len(classes):
                             return_types[0] = ''
+            for i in range(len(type_)):
+                if i == 0 and type_[i] == '' or type_[i] == 'none':
+                    while type_[0] == '' or type_[0] == 'none':
+                        type_ = input(f'What type do you want each function to be[Private/Public](in order, {list(i for i in classes)} > ')
+                        type_ = type_.split(',')
+                        if not len(type_) == len(classes):
+                            type_[0] = ''
+            if not len(type_) == len(classes):
+                while len(type_) != len(classes):
+                    type_ = input(f'What type do you want each function to be[Private/Public](in order, {list(i for i in classes)} > ')
+                    type_ = type_.split(',')
+                    for i in range(len(type_)):
+                        if i == 0 and type_[i] == '' or type_[i] == 'none':
+                            while type_[0] == '' or type_[0] == 'none':
+                                type_ = input(f'What type do you want each function to be[Private/Public](in order, {list(i for i in classes)} > ')
+                                type_ = type_.split(',')
+                                if not len(type_) == len(classes):
+                                    type_[0] = ''
             if not len(return_types) == len(classes):
                 while len(return_types) != len(classes):
                     print('Length of return types does not match the amount of classes.\n')
@@ -116,15 +145,29 @@ elif '.java' in new_file:
                                     return_types[0] = ''
                         if return_types[i] == '':
                             del(return_types[i])
+            for i in range(len(type_)):
+                if ' ' in type_[i]:
+                    type_[i] = type_[i].replace(' ', '')
+            for i in range(len(return_types)):
+                if ' ' in return_types[i]:
+                    return_types[i] = return_types[i].replace(' ', '')
+            for i in range(len(classes)):
+                if ' ' in classes[i]:
+                    classes[i] = classes[i].replace(' ', '')
     with open(new_file, 'w') as file:
         file.write('import java.util.Scanner;\n')
         file.write(f'\npublic class {main_class_name}')
         file.write('{\n')
+        file.write('\n\tprivate static Scanner user_input = new Scanner(System.in);\n')
         if isinstance(classes,list):
             for i in classes:
+                for d in range(len(type_)):
+                    file.write(f'\n\t{type_[d]} ')
+                    del(type_[d])
+                    break
                 for x in range(len(return_types)):
-                    file.write(f'\n\tpublic static {return_types[x]} {i}()')
-                    file.write('\t{\n\n\t}\n')
+                    file.write(f'static {return_types[x]} {i}()')
+                    file.write('{\n\n\t}\n')
                     del(return_types[x])
                     break
         file.write('\n\tpublic static void main(String[] args) {')
@@ -133,7 +176,11 @@ elif '.java' in new_file:
         file.write('\n}')
         file.flush()
         file.close()
-    os.system(f'vim {new_file}')
+    filename = ''
+    for i in range(len(new_file)):
+        if new_file[i] != '.':
+            filename += new_file[i]
+        else: break
+    os.system(f'vim {new_file} && clear && javac {new_file} && java {filename}')
 else: sys.exit(0)
-os.system('clear')
 sys.exit(0)
