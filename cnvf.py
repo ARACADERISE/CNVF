@@ -104,6 +104,23 @@ elif '.java' in new_file:
         if isinstance(classes,list):
             return_types = input(f'Return types of each class(in order, {list(i for i in classes)}) > ')
             type_ = input(f'What type do you want each function to be[Private/Public](in order, {list(i for i in classes)} > ')
+            args = {}
+            for i in classes:
+                arguments = input(f'Arguments[type arg_name] for function {i}\nIf none, type none or press enter\n>')
+                if arguments.lower() != 'none' or arguments != '':
+                    args.update({i:arguments.split(',')})
+
+            if len(args) > 0:
+                for i in args:
+                    for d in range(len(args[i])):
+                        if d == 0 and args[i][d] == '' or args[i][d] == 'none':
+                            while args[i][d] == '' or args[i][d] == 'none':
+                                arguments = input(f'Arguments[type arg_name] for function {i}\nIf none, type none or press enter\n>')
+                                if arguments.lower() != 'none' or arguments != '':
+                                    args[i] = arguments.split(',')
+               #: for i in args:
+               #     for d in range(len(args[i])):
+               #         args[i][d] = args[i][d].replace(' ','')
             type_ = type_.split(',')
             return_types = return_types.split(',')
             for i in range(len(return_types)):
@@ -145,15 +162,11 @@ elif '.java' in new_file:
                                     return_types[0] = ''
                         if return_types[i] == '':
                             del(return_types[i])
-            for i in range(len(type_)):
-                if ' ' in type_[i]:
-                    type_[i] = type_[i].replace(' ', '')
-            for i in range(len(return_types)):
-                if ' ' in return_types[i]:
-                    return_types[i] = return_types[i].replace(' ', '')
-            for i in range(len(classes)):
-                if ' ' in classes[i]:
-                    classes[i] = classes[i].replace(' ', '')
+            type_ = [i.replace(' ','') for i in type_]
+            return_types = [i.replace(' ','') for i in return_types]
+            classes = [i.replace(' ','') for i in classes]
+            if isinstance(arguments,list):
+                arguments = [i.replace(' ','') for i in arguments]
     with open(new_file, 'w') as file:
         file.write('import java.util.Scanner;\n')
         file.write(f'\npublic class {main_class_name}')
@@ -166,7 +179,17 @@ elif '.java' in new_file:
                     del(type_[d])
                     break
                 for x in range(len(return_types)):
-                    file.write(f'static {return_types[x]} {i}()')
+                    file.write(f'static {return_types[x]} {i} (')
+                    if len(args) > 0:
+                        for f in args:
+                            for t in range(len(args[f])):
+                                if t == len(args[f]): break
+                                else:
+                                    if t == len(args[f])-1:file.write(f'{args[f][t]})')
+                                    else:file.write(f'{args[f][t]},')
+                            break
+                    else:
+                        file.write(f'static {return_types[x]} {i}()')
                     file.write('{\n\n\t}\n')
                     del(return_types[x])
                     break
