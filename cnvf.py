@@ -1,6 +1,16 @@
 import os, sys
+from settings import Settings
 
 new_file = input('New vim file: ')
+
+settings = Settings()
+
+if new_file == 'settings':
+    settings.setupSettings()
+
+    if settings.hasSetup() == True:
+        print('DONE!\n')
+        settings.printSettings()
 
 if os.path.isfile(os.path.abspath(new_file)):
     override = input(f'Do you want to override the file {new_file}? [y/n] > ')
@@ -38,7 +48,7 @@ if '.c' in new_file:
             for i in range(len(return_types)):
                 if i == 0 and return_types[i] == '' or return_types[i] == 'none':
                     while return_types[0] == '' or return_types[0] == 'none':
-                        return_types = input(f'Return types of each functions, seperated by commas(in order, {list(i for i in functions)}) > )')
+                        return_types = input(f'Return types of each functions, seperated by commas(in order, {list(i for i in classes)}) > )')
                         return_types = return_types.split(',')
                         if not len(return_types) == len(functions):
                             return_types[0] = ''
