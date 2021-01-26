@@ -54,6 +54,7 @@ if '.c' in new_file:
                             return_types[0] = ''
                 if ' ' in return_types[i]:
                     return_types[i] = return_types[i].replace(' ', '')
+    new_file = new_file.replace("'",'')
     with open(new_file,'w') as file:
         file.write('#include <stdio.h>\n')
         if isinstance(functions,list):
@@ -68,6 +69,34 @@ if '.c' in new_file:
         file.close()
     os.system(f'vim {new_file}')
 elif '.py' in new_file:
+    server = False
+    if '-server' in new_file:
+        new_file = new_file.replace('-server','')
+        server = True
+        HOST = ''
+        PORT = ''
+        if 'HOST=' in new_file:
+            new_file = new_file.replace('HOST','')
+            for i in range(len(new_file)):
+                if new_file[i] == '=':
+                    new_file = new_file.replace(new_file[i],'')
+                    while new_file[i] != 'P':
+                        HOST += new_file[i]
+                        #new_file = new_file.replace(new_file[i],'')
+                        i += 1
+                    break
+            new_file = new_file.replace(HOST,'')
+        else: HOST = '127.0.0.1' # default
+        if 'PORT' in new_file:
+            new_file = new_file.replace('PORT','')
+            new_file = new_file.replace(' ','')
+            for i in range(len(new_file)):
+                if new_file[i].isnumeric():
+                    PORT += new_file[i]
+            new_file = new_file.replace(PORT,'')
+            PORT = int(PORT)
+        else: PORT = 18080
+
     functions = input('Functions to add, seperated by commas.\nPut none or press enter if you do not want any\n > ')
     other_imports = input('\nOther modules to import, seperated by commas.\nPut none or press enter if you do not want any\n> ')
     if not functions.lower() == 'none' or not functions == '':
@@ -85,8 +114,12 @@ elif '.py' in new_file:
             if i == 0 and other_imports[i] == '' or other_imports[i] == 'none':
                 other_imports = ''
                 break
+    new_file = new_file.replace(' ','')
     with open(new_file, 'w') as file:
         file.write('import os, sys, json\n') # main functions I use
+        if server == True:
+            file.write('import socket\n')
+            file.write(f'server = socket.socket(socket.AF_INET, socket.SOCK_STREAM\n\nHOST = \'{HOST}\'\nPORT = {PORT}\nserver.bind((HOST,PORT))\n\nserver.listen()\n\n# code here\n\n')
         if isinstance(other_imports,list):
             for i in other_imports:
                 file.write(f'import {i}\n')
