@@ -44,12 +44,22 @@ class Settings:
         if isinstance(to_change,list):
             for i in to_change:
                 change = input(f'\nset {i} to {"yes" if self.settings[i] == False else "no"}?[y/n] ')
-                if change == 'y':self.settings[i] = True if self.settings[i] == False else False
+                if change == 'y':
+                    if i == 'auto_run_specific':
+                        specifics_to_run = input('Type of files to automatically run(.extension) > ')
+                        if ',' in specifics_to_run: self.settings[i] = specifics_to_run.split(',')
+                        else:self.settings[i] = [specifics_to_run]
+                    else:self.settings[i] = True if self.settings[i] == False else False
                 if change == 'n':pass
         else:
             to_change = self.all_settings[int(to_change)-1]
             change = input(f'set {to_change} to {"yes" if self.settings[to_change] == False else "no"}?[y/n] ')
-            if change == 'y':self.settings[to_change] = True if self.settings[to_change] == False else False
+            if change == 'y':
+                if to_change == 'auto_run_specific':
+                    specifics_to_run = input('Type of files to automatically run(.extension) > ')
+                    if ',' in specifics_to_run:self.settings[to_change] = specifics_to_run.split(',')
+                    else:self.settings[to_change] = [specifics_to_run]
+                else:self.settings[to_change] = True if self.settings[to_change] == False else False
             if change == 'n': pass
 
         with open('settings.json','w') as file:
