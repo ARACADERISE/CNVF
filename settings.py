@@ -1,4 +1,4 @@
-import os, sys, json
+import os, sys, json, sqlite3
 
 class Settings:
 
@@ -7,12 +7,19 @@ class Settings:
             self.settings = {
                 'auto_run_all':False,
                 'auto_run_specific':False, # if true, will be list
-                'ls':False # list directories afterwards?
+                'ls':False, # list directories afterwards?
+                'Database': True,
+                'all_files':[]
             }
         else:
             self.settings = json.loads(open('settings.json','r').read())
         self.has_setup = False
-        self.all_settings = ['auto_run_all','auto_run_specific','ls']
+        self.all_settings = [i for i in self.settings]
+        # since Database is true by default, setup the database.
+        with open('db.db','w') as file:
+            file.close()
+        self.db = sqlite3.connect('db.db')
+        self.total_files = 0
 
     def setupSettings(self):
         self.has_setup = True
@@ -71,5 +78,25 @@ class Settings:
             file.flush()
             file.close()
 
+        os.system('clear')
+
     def hasSetup(self): return self.has_setup
-    def printSettings(self): return print(self.settings)
+    def hasDatabase(self): return self.settings['Database']
+    def startDb(self):
+        if self.hasDatabase() == True:
+            self.db.execute('''
+CREATE TABLE VimFiles (
+    filename text NOT NULL,
+    fileContent text NOT NULL,
+    id integer PRIMARY KEY
+);''')
+        else:
+            print('[!] You do not have the database active. All progress will be lost.\n')
+    def updDb(self, file_name, file_content):
+        if self.hasDatabase() == True:
+            if file_name not in self.settings['all_files']:
+                self.settings['all_files'].append(file_name)
+                self.total_files += 1
+                self.db.execute(f'INSERT INTO VimFiles(filename,fileContent,id) VALUES ({file_name},{file_content},{self.total_files})')
+            else:
+                self.db.execute(f'UPDATE VimFiles SET fileContent = "{file_content}" WHERE filename = "{file_name}"')
