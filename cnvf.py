@@ -7,10 +7,12 @@ settings.startDb()
 new_file = input('New vim file: ')
 
 if new_file == 'settings':
-    settings.setupSettings()
+    while new_file == 'settings':
+        settings.setupSettings()
 
-    if settings.hasSetup() == True:
-        new_file = input('New vim file: ')
+        if settings.hasSetup() == True:
+            settings.startDb()
+            new_file = input('New vim file: ')
 
 if os.path.isfile(os.path.abspath(new_file)):
     override = input(f'Do you want to override the file {new_file}? [y/n] > ')
