@@ -85,7 +85,7 @@ class Settings:
     def startDb(self):
         if self.hasDatabase() == True:
             self.db.execute('''
-CREATE TABLE VimFiles (
+CREATE TABLE IF NOT EXISTS VimFiles (
     filename text NOT NULL,
     fileContent text NOT NULL,
     id integer PRIMARY KEY
