@@ -6,6 +6,30 @@ settings.startDb()
 
 new_file = input('New vim file: ')
 
+if not '.' in new_file:
+    while not '.' in new_file:
+        extension = input(f'What extension is the file {new_file}?(include the ".") > ')
+        if '.' in extension:
+            new_file+=extension
+
+if '-autorun' in new_file:
+    if not '.py' in new_file and not '-server' in new_file:
+        new_file = new_file.replace('-autorun','')
+
+    if '.c' in new_file:pass
+    if '.py' in new_file:
+        if not '-server' in new_file:print('here')
+        else:pass
+    if '.java' in new_file:
+        filename = ''
+        for i in range(len(new_file)):
+            if new_file[i] != '.':
+                filename+=new_file[i]
+            else:break
+        os.system(f'vim {new_file} && clear && javac {new_file} && java {filename}')
+        sys.exit(0)
+
+
 if new_file == 'settings':
     while new_file == 'settings':
         settings.setupSettings()
@@ -99,38 +123,45 @@ elif '.py' in new_file:
             PORT = int(PORT)
         else: PORT = 18080
 
-    functions = input('Functions to add, seperated by commas.\nPut none or press enter if you do not want any\n > ')
-    other_imports = input('\nOther modules to import, seperated by commas.\nPut none or press enter if you do not want any\n> ')
-    if not functions.lower() == 'none' or not functions == '':
-        functions = functions.split(',')
-        for i in range(len(functions)):
-            if ' ' in functions[i]:
-                functions[i] = functions[i].replace(' ', '')
-            if i == 0 and functions[i] == '' or functions[i] == 'none':
-                functions = ''
-    if not other_imports.lower() == 'none' or not other_imports  == '':
-        other_imports = other_imports.split(',')
-        for i in range(len(other_imports)):
-            if ' ' in other_imports[i]:
-                other_imports[i] = other_imports[i].replace(' ', '')
-            if i == 0 and other_imports[i] == '' or other_imports[i] == 'none':
-                other_imports = ''
-                break
-    new_file = new_file.replace(' ','')
+    if not '-autorun' in new_file:
+        functions = input('Functions to add, seperated by commas.\nPut none or press enter if you do not want any\n > ')
+        other_imports = input('\nOther modules to import, seperated by commas.\nPut none or press enter if you do not want any\n> ')
+        if not functions.lower() == 'none' or not functions == '':
+            functions = functions.split(',')
+            for i in range(len(functions)):
+                if ' ' in functions[i]:
+                    functions[i] = functions[i].replace(' ', '')
+                if i == 0 and functions[i] == '' or functions[i] == 'none':
+                    functions = ''
+        if not other_imports.lower() == 'none' or not other_imports  == '':
+            other_imports = other_imports.split(',')
+            for i in range(len(other_imports)):
+                if ' ' in other_imports[i]:
+                    other_imports[i] = other_imports[i].replace(' ', '')
+                if i == 0 and other_imports[i] == '' or other_imports[i] == 'none':
+                    other_imports = ''
+                    break
+        new_file = new_file.replace(' ','')
+    else:
+        new_file = new_file.replace('-autorun','')
+        new_file = new_file.replace(' ','')
+
     with open(new_file, 'w') as file:
         file.write('import os, sys, json\n') # main functions I use
         if server == True:
             file.write('import socket\n')
-            file.write(f'server = socket.socket(socket.AF_INET, socket.SOCK_STREAM\n\nHOST = \'{HOST}\'\nPORT = {PORT}\nserver.bind((HOST,PORT))\n\nserver.listen()\n\n# code here\n\n')
-        if isinstance(other_imports,list):
-            for i in other_imports:
-                file.write(f'import {i}\n')
-        if isinstance(functions,list):
-            for i in functions:
-                file.write(f'\ndef {i}():\n    pass\n')
+            file.write(f'server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)\n\nHOST = \'{HOST}\'\nPORT = {PORT}\nserver.bind((HOST,PORT))\n\nserver.listen()\n\nwhile True:\n\tcli, addr = server.accept()\n\n\t# code here\n\n\tcli.close()\n')
+        try:
+            if isinstance(other_imports,list):
+                for i in other_imports:
+                    file.write(f'import {i}\n')
+            if isinstance(functions,list):
+                for i in functions:
+                    file.write(f'\ndef {i}():\n    pass\n')
+        except:pass # we don't care about the error.
         file.flush()
         file.close()
-    os.system(f'vim {new_file}')
+    os.system(f'vim {new_file} && clear && python3 {new_file}')
 elif '.java' in new_file:
     main_class_name = ''
     for i in range(len(new_file)):
