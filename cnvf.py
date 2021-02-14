@@ -1,6 +1,8 @@
 import os, sys, json
 from settings import Settings
 
+new_file = input('New vim file: ')
+
 def override():
   if os.path.isfile(new_file):
       os.system(f'vim {new_file} && clear && java {basic_info[new_file]}.{filename}')
@@ -54,8 +56,6 @@ already_exists = False
 if not os.path.isfile('b_i.json'):basic_info = {}
 else:
     basic_info = json.loads(open(os.path.abspath('b_i.json'),'r').read())
-
-new_file = input('New vim file: ')
 
 if new_file == 'settings':
     while new_file == 'settings':
