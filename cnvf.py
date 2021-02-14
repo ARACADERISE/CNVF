@@ -52,35 +52,35 @@ if '-autorun' in new_file:
                 while i < len(new_file):
                   package_name += new_file[i]
                   i+=1
-                #break
-            new_file = new_file.replace(package_name,'')
-            new_file = new_file.replace(' ','')
+                break
+          new_file = new_file.replace(package_name,'')
+          new_file = new_file.replace(' ','')
 
-            filename = ''
-            with open(new_file,'w') as file:
-              file.write(f'package {package_name};\n')
-              file.write('import java.util.Scanner;\n\n')
-              for i in range(len(new_file)):
-                if not new_file[i] == '.':filename+=new_file[i]
-                else:break
-              file.write(f'public class {filename} ')
-              file.write('{\n\tprivate static Scanner user_input = new Scanner(System.in);\n\n')
-              file.write('\tpublic static void main(String[] args) {\n')
-              file.write('\t\tSystem.out.println("Hello, World!");\n\t}\n}')
-              file.flush()
-              file.close()
-            os.system(f'vim {new_file} && clear')
-            os.system(f'javac -d . {new_file} && java {package_name}.{filename}')
-            basic_info.update({new_file:package_name})
-            with open('b_i.json','w') as file:
-              file.write(json.dumps(
-                basic_info,
-                indent=2,
-                sort_keys=False
-              ))
-              file.flush()
-              file.close()
-            sys.exit(0)
+          filename = ''
+          with open(new_file,'w') as file:
+            file.write(f'package {package_name};\n')
+            file.write('import java.util.Scanner;\n\n')
+            for i in range(len(new_file)):
+              if not new_file[i] == '.':filename+=new_file[i]
+              else:break
+            file.write(f'public class {filename} ')
+            file.write('{\n\tprivate static Scanner user_input = new Scanner(System.in);\n\n')
+            file.write('\tpublic static void main(String[] args) {\n')
+            file.write('\t\tSystem.out.println("Hello, World!");\n\t}\n}')
+            file.flush()
+            file.close()
+          os.system(f'vim {new_file} && clear')
+          os.system(f'javac -d . {new_file} && java {package_name}.{filename}')
+          basic_info.update({new_file:package_name})
+          with open('b_i.json','w') as file:
+            file.write(json.dumps(
+              basic_info,
+              indent=2,
+              sort_keys=False
+            ))
+            file.flush()
+            file.close()
+          sys.exit(0)
 
 if os.path.isfile(os.path.abspath(new_file)):
     override = input(f'Do you want to override the file {new_file}? [y/n] > ')
