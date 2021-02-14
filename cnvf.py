@@ -87,6 +87,7 @@ if '-autorun' in new_file:
                 filename+=new_file[i]
             else:break
         override()
+        sys.exit(0)
 
 if os.path.isfile(os.path.abspath(new_file)):
     override = input(f'Do you want to override the file {new_file}? [y/n] > ')
