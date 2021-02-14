@@ -3,50 +3,50 @@ from settings import Settings
 
 def override():
   if os.path.isfile(new_file):
-            os.system(f'vim {new_file} && clear && java {basic_info[new_file]}.{filename}')
-            sys.exit(0)
-        else:
-            package_name = ''
-            if not 'PACKAGE_NAME' in new_file:
-                while package_name == '':
-                    package_name = input(f'Package name for file {new_file} > ')
-            else:
-                new_file = new_file.replace('PACKAGE_NAME','')
-                for i in range(len(new_file)):
-                    if new_file[i] == '=':
-                        new_file = new_file.replace(new_file[i],'')
-                        while i < len(new_file):
-                            package_name += new_file[i]
-                            i+=1
-                        break
-                new_file = new_file.replace(package_name,'')
-                new_file = new_file.replace(' ','')
+      os.system(f'vim {new_file} && clear && java {basic_info[new_file]}.{filename}')
+      sys.exit(0)
+    else:
+      package_name = ''
+      if not 'PACKAGE_NAME' in new_file:
+        while package_name == '':
+          package_name = input(f'Package name for file {new_file} > ')
+      else:
+        new_file = new_file.replace('PACKAGE_NAME','')
+        for i in range(len(new_file)):
+          if new_file[i] == '=':
+            new_file = new_file.replace(new_file[i],'')
+            while i < len(new_file):
+              package_name += new_file[i]
+              i+=1
+            break
+        new_file = new_file.replace(package_name,'')
+        new_file = new_file.replace(' ','')
 
-                filename = ''
-                with open(new_file,'w') as file:
-                    file.write(f'package {package_name};\n')
-                    file.write('import java.util.Scanner;\n\n')
-                    for i in range(len(new_file)):
-                        if not new_file[i] == '.':filename+=new_file[i]
-                        else:break
-                    file.write(f'public class {filename} ')
-                    file.write('{\n\tprivate static Scanner user_input = new Scanner(System.in);\n\n')
-                    file.write('\tpublic static void main(String[] args) {\n')
-                    file.write('\t\tSystem.out.println("Hello, World!");\n\t}\n}')
-                    file.flush()
-                    file.close()
-                os.system(f'vim {new_file} && clear')
-                os.system(f'javac -d . {new_file} && java {package_name}.{filename}')
-                basic_info.update({new_file:package_name})
-                with open('b_i.json','w') as file:
-                    file.write(json.dumps(
-                        basic_info,
-                        indent=2,
-                        sort_keys=False
-                    ))
-                    file.flush()
-                    file.close()
-                sys.exit(0)
+        filename = ''
+        with open(new_file,'w') as file:
+          file.write(f'package {package_name};\n')
+          file.write('import java.util.Scanner;\n\n')
+          for i in range(len(new_file)):
+            if not new_file[i] == '.':filename+=new_file[i]
+            else:break
+          file.write(f'public class {filename} ')
+          file.write('{\n\tprivate static Scanner user_input = new Scanner(System.in);\n\n')
+           file.write('\tpublic static void main(String[] args) {\n')
+          file.write('\t\tSystem.out.println("Hello, World!");\n\t}\n}')
+          file.flush()
+          file.close()
+        os.system(f'vim {new_file} && clear')
+        os.system(f'javac -d . {new_file} && java {package_name}.{filename}')
+        basic_info.update({new_file:package_name})
+        with open('b_i.json','w') as file:
+          file.write(json.dumps(
+            basic_info,
+            indent=2,
+            sort_keys=False
+          ))
+          file.flush()
+          file.close()
+        sys.exit(0)
 
 settings = Settings()
 settings.startDb()
