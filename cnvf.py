@@ -3,11 +3,43 @@ from settings import Settings
 
 new_file = input('New vim file: ')
 
-def override():
-  global new_file
-  global basic_info
-  if os.path.isfile(new_file):
-      return basic_info[new_file]
+settings = Settings()
+settings.startDb()
+already_exists = False
+if not os.path.isfile('b_i.json'):basic_info = {}
+else:
+    basic_info = json.loads(open(os.path.abspath('b_i.json'),'r').read())
+
+if new_file == 'settings':
+    while new_file == 'settings':
+        settings.setupSettings()
+
+        if settings.hasSetup() == True:
+            settings.startDb()
+            new_file = input('New vim file: ')
+
+if not '.' in new_file:
+    while not '.' in new_file:
+        extension = input(f'What extension is the file {new_file}?(include the ".") > ')
+        if '.' in extension:
+            new_file+=extension
+
+if '-autorun' in new_file:
+    if not '.py' in new_file and not '-server' in new_file:
+        new_file = new_file.replace('-autorun','')
+        new_file = new_file.replace(' ','')
+    if '.c' in new_file:pass
+    if '.py' in new_file:
+        if not '-server' in new_file:print('here')
+        else:pass
+    if '.java' in new_file:
+        filename = ''
+        for i in range(len(new_file)):
+            if new_file[i] != '.':
+                filename+=new_file[i]
+            else:break
+        if os.path.isfile(new_file):
+      os.system(f'clear && java {basic_info[new_file]}.{filename}')
   else:
       package_name = ''
       if not 'PACKAGE_NAME' in new_file:
@@ -47,44 +79,6 @@ def override():
           ))
           file.flush()
           file.close()
-      return package_name
-
-settings = Settings()
-settings.startDb()
-already_exists = False
-if not os.path.isfile('b_i.json'):basic_info = {}
-else:
-    basic_info = json.loads(open(os.path.abspath('b_i.json'),'r').read())
-
-if new_file == 'settings':
-    while new_file == 'settings':
-        settings.setupSettings()
-
-        if settings.hasSetup() == True:
-            settings.startDb()
-            new_file = input('New vim file: ')
-
-if not '.' in new_file:
-    while not '.' in new_file:
-        extension = input(f'What extension is the file {new_file}?(include the ".") > ')
-        if '.' in extension:
-            new_file+=extension
-
-if '-autorun' in new_file:
-    if not '.py' in new_file and not '-server' in new_file:
-        new_file = new_file.replace('-autorun','')
-        new_file = new_file.replace(' ','')
-    if '.c' in new_file:pass
-    if '.py' in new_file:
-        if not '-server' in new_file:print('here')
-        else:pass
-    if '.java' in new_file:
-        filename = ''
-        for i in range(len(new_file)):
-            if new_file[i] != '.':
-                filename+=new_file[i]
-            else:break
-        package_name = override()
         os.system(f'vim {new_file} && clear')
         os.system(f'javac -d . {new_file} && java {package_name}.{filename}')
         sys.exit(0)
