@@ -69,6 +69,8 @@ if '-autorun' in new_file:
               file.write('\t\tSystem.out.println("Hello, World!");\n\t}\n}')
               file.flush()
               file.close()
+            os.system(f'vim {new_file} && clear')
+            os.system(f'javac -d . {new_file} && java {package_name}.{filename}')
             basic_info.update({new_file:package_name})
             with open('b_i.json','w') as file:
               file.write(json.dumps(
@@ -78,8 +80,6 @@ if '-autorun' in new_file:
               ))
               file.flush()
               file.close()
-            os.system(f'vim {new_file} && clear')
-            os.system(f'javac -d . {new_file} && java {package_name}.{filename}')
             sys.exit(0)
 
 if os.path.isfile(os.path.abspath(new_file)):
