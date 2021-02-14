@@ -3,7 +3,7 @@ from settings import Settings
 
 new_file = input('New vim file: ')
 
-def override(filename):
+def override():
   global new_file
   global basic_info
   if os.path.isfile(new_file):
@@ -47,8 +47,6 @@ def override(filename):
           ))
           file.flush()
           file.close()
-        print(open(new_file,'r').read())
-        sys.exit(0)
       return package_name
 
 settings = Settings()
@@ -86,7 +84,7 @@ if '-autorun' in new_file:
             if new_file[i] != '.':
                 filename+=new_file[i]
             else:break
-        package_name = override(filename)
+        package_name = override()
         os.system(f'vim {new_file} && clear')
         os.system(f'javac -d . {new_file} && java {package_name}.{filename}')
         sys.exit(0)
