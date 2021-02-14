@@ -102,8 +102,7 @@ if os.path.isfile(os.path.abspath(new_file)):
                 if new_file[i] != '.':
                     filename += new_file[i]
                 else: break
-            override()
-            #os.system(f'clear && java {basic_info[new_file]}.{filename}')
+            os.system(f'clear && java {basic_info[new_file]}.{filename}')
         sys.exit(0)
     already_exists = True
 
