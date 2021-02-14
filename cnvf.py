@@ -1,44 +1,8 @@
 import os, sys, json
 from settings import Settings
 
-settings = Settings()
-settings.startDb()
-already_exists = False
-if not os.path.isfile('b_i.json'):basic_info = {}
-else:
-    basic_info = json.loads(open(os.path.abspath('b_i.json'),'r').read())
-
-new_file = input('New vim file: ')
-
-if new_file == 'settings':
-    while new_file == 'settings':
-        settings.setupSettings()
-
-        if settings.hasSetup() == True:
-            settings.startDb()
-            new_file = input('New vim file: ')
-
-if not '.' in new_file:
-    while not '.' in new_file:
-        extension = input(f'What extension is the file {new_file}?(include the ".") > ')
-        if '.' in extension:
-            new_file+=extension
-
-if '-autorun' in new_file:
-    if not '.py' in new_file and not '-server' in new_file:
-        new_file = new_file.replace('-autorun','')
-        new_file = new_file.replace(' ','')
-    if '.c' in new_file:pass
-    if '.py' in new_file:
-        if not '-server' in new_file:print('here')
-        else:pass
-    if '.java' in new_file:
-        filename = ''
-        for i in range(len(new_file)):
-            if new_file[i] != '.':
-                filename+=new_file[i]
-            else:break
-        if os.path.isfile(new_file):
+def override():
+  if os.path.isfile(new_file):
             os.system(f'vim {new_file} && clear && java {basic_info[new_file]}.{filename}')
             sys.exit(0)
         else:
@@ -84,6 +48,45 @@ if '-autorun' in new_file:
                     file.close()
                 sys.exit(0)
 
+settings = Settings()
+settings.startDb()
+already_exists = False
+if not os.path.isfile('b_i.json'):basic_info = {}
+else:
+    basic_info = json.loads(open(os.path.abspath('b_i.json'),'r').read())
+
+new_file = input('New vim file: ')
+
+if new_file == 'settings':
+    while new_file == 'settings':
+        settings.setupSettings()
+
+        if settings.hasSetup() == True:
+            settings.startDb()
+            new_file = input('New vim file: ')
+
+if not '.' in new_file:
+    while not '.' in new_file:
+        extension = input(f'What extension is the file {new_file}?(include the ".") > ')
+        if '.' in extension:
+            new_file+=extension
+
+if '-autorun' in new_file:
+    if not '.py' in new_file and not '-server' in new_file:
+        new_file = new_file.replace('-autorun','')
+        new_file = new_file.replace(' ','')
+    if '.c' in new_file:pass
+    if '.py' in new_file:
+        if not '-server' in new_file:print('here')
+        else:pass
+    if '.java' in new_file:
+        filename = ''
+        for i in range(len(new_file)):
+            if new_file[i] != '.':
+                filename+=new_file[i]
+            else:break
+        override()
+
 if os.path.isfile(os.path.abspath(new_file)):
     override = input(f'Do you want to override the file {new_file}? [y/n] > ')
     if override == 'n':
@@ -97,7 +100,8 @@ if os.path.isfile(os.path.abspath(new_file)):
                 if new_file[i] != '.':
                     filename += new_file[i]
                 else: break
-            os.system(f'clear && java {basic_info[new_file]}.{filename}')
+            override()
+            #os.system(f'clear && java {basic_info[new_file]}.{filename}')
         sys.exit(0)
     already_exists = True
 
