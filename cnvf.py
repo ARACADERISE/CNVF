@@ -4,6 +4,7 @@ from settings import Settings
 new_file = input('New vim file: ')
 
 def override():
+  global new_file
   if os.path.isfile(new_file):
       os.system(f'vim {new_file} && clear && java {basic_info[new_file]}.{filename}')
       sys.exit(0)
