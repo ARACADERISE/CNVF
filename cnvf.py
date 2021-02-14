@@ -52,7 +52,7 @@ if '-autorun' in new_file:
                 while i < len(new_file):
                   package_name += new_file[i]
                   i+=1
-                break
+                #break
             new_file = new_file.replace(package_name,'')
             new_file = new_file.replace(' ','')
 
