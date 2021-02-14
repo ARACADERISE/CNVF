@@ -9,6 +9,8 @@ def override(filename):
   if os.path.isfile(new_file):
       return basic_info[new_file]
   else:
+      print('here')
+      sys.exit(0)
       package_name = ''
       if not 'PACKAGE_NAME' in new_file:
         while package_name == '':
