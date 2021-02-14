@@ -1,10 +1,22 @@
-import os, sys
+import os, sys, json
 from settings import Settings
 
 settings = Settings()
 settings.startDb()
+already_exists = False
+if not os.path.isfile('b_i.json'):basic_info = {}
+else:
+    basic_info = json.loads(open(os.path.abspath('b_i.json'),'r').read())
 
 new_file = input('New vim file: ')
+
+if new_file == 'settings':
+    while new_file == 'settings':
+        settings.setupSettings()
+
+        if settings.hasSetup() == True:
+            settings.startDb()
+            new_file = input('New vim file: ')
 
 if not '.' in new_file:
     while not '.' in new_file:
@@ -15,7 +27,7 @@ if not '.' in new_file:
 if '-autorun' in new_file:
     if not '.py' in new_file and not '-server' in new_file:
         new_file = new_file.replace('-autorun','')
-
+        new_file = new_file.replace(' ','')
     if '.c' in new_file:pass
     if '.py' in new_file:
         if not '-server' in new_file:print('here')
@@ -26,17 +38,9 @@ if '-autorun' in new_file:
             if new_file[i] != '.':
                 filename+=new_file[i]
             else:break
-        os.system(f'vim {new_file} && clear && javac {new_file} && java {filename}')
+        print(basic_info[new_file],filename)
+        os.system(f'vim {new_file} && clear && java {basic_info[new_file]}.{filename}')
         sys.exit(0)
-
-
-if new_file == 'settings':
-    while new_file == 'settings':
-        settings.setupSettings()
-
-        if settings.hasSetup() == True:
-            settings.startDb()
-            new_file = input('New vim file: ')
 
 if os.path.isfile(os.path.abspath(new_file)):
     override = input(f'Do you want to override the file {new_file}? [y/n] > ')
@@ -51,8 +55,9 @@ if os.path.isfile(os.path.abspath(new_file)):
                 if new_file[i] != '.':
                     filename += new_file[i]
                 else: break
-            os.system(f'javac {new_file} && java {filename}')
+            os.system(f'clear && java {basic_info[new_file]}.{filename}')
         sys.exit(0)
+    already_exists = True
 
 if '.c' in new_file:
     functions = input('Functions to add seperated by commas.\nPress enter or put none if you do not want any.\n > ')
@@ -163,12 +168,27 @@ elif '.py' in new_file:
         file.close()
     os.system(f'vim {new_file} && clear && python3 {new_file}')
 elif '.java' in new_file:
+    package_name = ''
+    if not 'PACKAGE_NAME=' in new_file:
+        package_name = input(f'Package name of file {new_file}: ')
+    else:
+        new_file = new_file.replace('PACKAGE_NAME','')
+        for i in range(len(new_file)):
+            if new_file[i] == '=':
+                new_file = new_file.replace(new_file[i],'')
+                while i < len(new_file):
+                    package_name += new_file[i]
+                    i+=1
+                break
+    print(package_name)
     main_class_name = ''
     for i in range(len(new_file)):
         if not new_file[i] == '.':
             main_class_name += new_file[i]
         else: break
     classes = input('List of classes you want(seperated with commas).\nPress or enter none if you do not want any.\n>  ')
+    other_imports = input(f'Other libraries to import(If none, press ENTER or type "none". Seperate by commas) > ')
+    if not other_imports == '' or not other_imports == 'none': other_imports = other_imports.split(',')
     if not classes.lower() == 'none' or not classes == '':
         classes = list(classes.split(','))
         for i in range(len(classes)):
@@ -243,11 +263,19 @@ elif '.java' in new_file:
             classes = [i.replace(' ','') for i in classes]
             if isinstance(arguments,list):
                 arguments = [i.replace(' ','') for i in arguments]
+    new_file = new_file.replace(package_name,'')
+    new_file = new_file.replace(' ','')
     with open(new_file, 'w') as file:
+        file.write(f'package {package_name};\n')
         file.write('import java.util.Scanner;\n')
+        if isinstance(other_imports,list):
+            for i in other_imports:
+                file.write(f'import {i};\n')
         file.write(f'\npublic class {main_class_name}')
         file.write('{\n')
         file.write('\n\tprivate static Scanner user_input = new Scanner(System.in);\n')
+        if 'java.util.Random' in other_imports:
+            file.write('\tstatic Random random = new Random();\n')
         if isinstance(classes,list):
             for i in classes:
                 for d in range(len(type_)):
@@ -255,7 +283,7 @@ elif '.java' in new_file:
                     del(type_[d])
                     break
                 for x in range(len(return_types)):
-                    file.write(f'static {return_types[x]} {i} (')
+                    file.write(f'static {return_types[x]} {i}(')
                     if len(args) > 0:
                         for f in args:
                             for t in range(len(args[f])):
@@ -280,6 +308,21 @@ elif '.java' in new_file:
         if new_file[i] != '.':
             filename += new_file[i]
         else: break
-    os.system(f'vim {new_file} && clear && javac {new_file} && java {filename}')
+    os.system(f'vim {new_file}')
+    if not already_exists == True:
+        print('ok')
+        sys.exit(0)
+        basic_info.update({new_file:package_name})
+        os.system(f'clear && javac -d . {new_file} && java {package_name}.{filename}')
+    else:
+        os.system(f'clear && java {basic_info[new_file]}.{filename}')
 else: sys.exit(0)
+with open('b_i.json','w') as file:
+    file.write(json.dumps(
+        basic_info,
+        indent=2,
+        sort_keys=False
+    ))
+    file.flush()
+    file.close()
 sys.exit(0)
