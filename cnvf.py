@@ -9,8 +9,6 @@ def override(filename):
   if os.path.isfile(new_file):
       return basic_info[new_file]
   else:
-      print('here')
-      sys.exit(0)
       package_name = ''
       if not 'PACKAGE_NAME' in new_file:
         while package_name == '':
@@ -49,6 +47,8 @@ def override(filename):
           ))
           file.flush()
           file.close()
+        print(open(new_file,'r').read())
+        sys.exit(0)
       return package_name
 
 settings = Settings()
