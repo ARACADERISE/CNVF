@@ -3,11 +3,11 @@ from settings import Settings
 
 new_file = input('New vim file: ')
 
-def override():
+def override(filename):
   global new_file
+  global basic_info
   if os.path.isfile(new_file):
-      os.system(f'vim {new_file} && clear && java {basic_info[new_file]}.{filename}')
-      sys.exit(0)
+      return basic_info[new_file]
   else:
       package_name = ''
       if not 'PACKAGE_NAME' in new_file:
@@ -38,8 +38,6 @@ def override():
           file.write('\t\tSystem.out.println("Hello, World!");\n\t}\n}')
           file.flush()
           file.close()
-        os.system(f'vim {new_file} && clear')
-        os.system(f'javac -d . {new_file} && java {package_name}.{filename}')
         basic_info.update({new_file:package_name})
         with open('b_i.json','w') as file:
           file.write(json.dumps(
@@ -49,7 +47,7 @@ def override():
           ))
           file.flush()
           file.close()
-        sys.exit(0)
+      return package_name
 
 settings = Settings()
 settings.startDb()
@@ -86,7 +84,9 @@ if '-autorun' in new_file:
             if new_file[i] != '.':
                 filename+=new_file[i]
             else:break
-        override()
+        package_name = override(filename)
+        os.system(f'vim {new_file} && clear')
+        os.system(f'javac -d . {new_file} && java {package_name}.{filename}')
         sys.exit(0)
 
 if os.path.isfile(os.path.abspath(new_file)):
