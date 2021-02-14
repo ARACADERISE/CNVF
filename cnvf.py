@@ -5,7 +5,7 @@ def override():
   if os.path.isfile(new_file):
       os.system(f'vim {new_file} && clear && java {basic_info[new_file]}.{filename}')
       sys.exit(0)
-    else:
+  else:
       package_name = ''
       if not 'PACKAGE_NAME' in new_file:
         while package_name == '':
@@ -31,7 +31,7 @@ def override():
             else:break
           file.write(f'public class {filename} ')
           file.write('{\n\tprivate static Scanner user_input = new Scanner(System.in);\n\n')
-           file.write('\tpublic static void main(String[] args) {\n')
+          file.write('\tpublic static void main(String[] args) {\n')
           file.write('\t\tSystem.out.println("Hello, World!");\n\t}\n}')
           file.flush()
           file.close()
