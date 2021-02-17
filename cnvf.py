@@ -30,7 +30,11 @@ if '-autorun' in new_file:
         new_file = new_file.replace(' ','')
     if '.c' in new_file:pass
     if '.py' in new_file:
-        if not '-server' in new_file:print('here')
+        if not '-server' in new_file:
+          new_file = new_file.replace('-autorun','')
+          new_file = new_file.replace(' ','')
+          os.system(f'vim {new_file} && clear && python3 {new_file}')
+          sys.exit(0)
         else:pass
     if '.java' in new_file:
         filename = ''
