@@ -25,7 +25,7 @@ if not '.' in new_file:
             new_file+=extension
 
 if '-autorun' in new_file:
-    if not '.py' in new_file and not '-server' in new_file:
+    if not '-server' in new_file:
         new_file = new_file.replace('-autorun','')
         new_file = new_file.replace(' ','')
     if '.c' in new_file:pass
