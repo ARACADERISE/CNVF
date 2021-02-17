@@ -119,7 +119,7 @@ if '.c' in new_file:
             for i in range(len(return_types)):
                 if i == 0 and return_types[i] == '' or return_types[i] == 'none':
                     while return_types[0] == '' or return_types[0] == 'none':
-                        return_types = input(f'Return types of each functions, seperated by commas(in order, {list(i for i in classes)}) > )')
+                        return_types = input(f'Return types of each functions, seperated by commas(in order, {list(i for i in functions)}) > )')
                         return_types = return_types.split(',')
                         if not len(return_types) == len(functions):
                             return_types[0] = ''
